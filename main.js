@@ -300,7 +300,7 @@ class CalendarView extends ItemView {
 
   getViewType()        { return VIEW_TYPE; }
   getDisplayText()     { return 'Calendar Task Planner'; }
-  getIcon()            { return 'calendar-days'; }
+  getIcon()            { return 'calendar'; }
 
   async onOpen() {
     await this.store.load();
@@ -480,7 +480,9 @@ class CalendarTaskPlanner extends Plugin {
 
     this.registerView(VIEW_TYPE, (leaf) => new PlannerView(leaf, this));
 
-    this.addRibbonIcon('calendar-days', 'Calendar Task Planner', () => this.activateView());
+    this.addRibbonIcon('calendar', 'Calendar Task Planner', () => this.activateView());
+
+    this.app.workspace.onLayoutReady(() => this.activateView());
 
     this.addCommand({
       id: 'open-ctp-planner',
@@ -493,7 +495,7 @@ class CalendarTaskPlanner extends Plugin {
     const { workspace } = this.app;
     let leaf = workspace.getLeavesOfType(VIEW_TYPE)[0];
     if (!leaf) {
-      leaf = workspace.getLeaf(false);
+      leaf = workspace.getRightLeaf(false);
       await leaf.setViewState({ type: VIEW_TYPE, active: true });
     }
     workspace.revealLeaf(leaf);
